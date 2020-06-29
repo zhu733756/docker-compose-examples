@@ -1,0 +1,42 @@
+cerebro:
+  image: lmenezes/cerebro:0.8.3
+  container_name: cerebro
+  ports:
+    - "9000:9000"
+  command:
+    - -Dhosts.0.host=http://172.16.40.2:9200
+kibana:
+  image: docker.elastic.co/kibana/kibana:7.1.0
+  container_name: kibana7
+  environment:
+    - I18N_LOCALE=zh-CN
+    - XPACK_GRAPH_ENABLED=true
+    - TIMELION_ENABLED=true
+    - XPACK_MONITORING_COLLECTION_ENABLED="true"
+    - ELASTICSEARCH_HOSTS=http://172.16.40.2:9200
+    - ELASTICSEARCH_USERNAME=kibana
+    - ELASTICSEARCH_PASSWORD=qwerasdzxc123
+  #volumes:
+  #    - ./kibana.yml:/opt/module/es/kibana.yml
+  ports:
+    - "5601:5601"
+elasticsearch:
+  image: docker.elastic.co/elasticsearch/elasticsearch:7.1.0
+  container_name: es7
+  environment:
+    - cluster.name=es7
+    - node.name=es701
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - "TZ=Asia/Shanghai"
+    - discovery.type=single-node
+    - path.data=node0_data
+    - network.host=0.0.0.0
+    - xpack.security.enabled=true
+    - xpack.security.transport.ssl.enabled=true
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+  ports:
+    - 9200:9200
